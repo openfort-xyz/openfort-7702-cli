@@ -1,6 +1,19 @@
-export const authorityPrivateKey =
-  "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
+import dotenv from "dotenv";
+import type { Hex, Address } from "viem";
+
+dotenv.config();
+
+// EOA that controls the smart account
+export const authorityPrivateKey = process.env.AUTHORITY_PRIVATE_KEY as Hex;
+// Smart account Proxy to inject into the EOA
+export const openfortSmartAccountProxy = process.env
+  .OPENFORT_SMART_ACCOUNT_PROXY as Address;
+// Smart account Implementation
+export const openfortSmartAccountImplementation = process.env
+  .OPENFORT_SMART_ACCOUNT_IMPLEMENTATION as Address;
+// Guardian Address
+export const guardianAddress = process.env.GUARDIAN_ADDRESS as Address;
+
+// https://github.com/eth-infinitism/bundler
+// yarn hardhat-deploy --network localhost
 export const entryPointV7 = "0x0000000071727De22E5E9d8BAf0edAc6f37da032";
-// salt (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, 0x4200000000000000000000000000000000000000000000000000000000000000)
-export const openfortSmartAccount =
-  "0x5FbDB2315678afecb367f032d93F642f64180aa3";
