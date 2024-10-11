@@ -1,4 +1,4 @@
-import { walletClient, bundlerClient, publicClient } from "./clients";
+import { publicClient, bundlerClient } from "./clients";
 import {
   hashAuthorization,
   recoverAuthorizationAddress,
@@ -6,12 +6,7 @@ import {
 import type { SignedAuthorization } from "viem/experimental";
 import { Command } from "commander";
 import { authority } from "./account";
-import {
-  encodeFunctionData,
-  getContract,
-  parseAbi,
-  parseSignature,
-} from "viem";
+import { encodeFunctionData, parseAbi, parseSignature } from "viem";
 import { sendTransaction } from "viem/actions";
 import { anvil } from "viem/chains";
 
@@ -22,6 +17,7 @@ import {
   openfortSmartAccountProxy,
 } from "./constants";
 import assert = require("node:assert");
+import { getAccount } from "./openfortSmartAccount";
 
 const figlet = require("figlet");
 const program = new Command();
@@ -117,6 +113,44 @@ program
       to: authority.address,
     });
     console.log("Transaction sent:", hash);
+  });
+
+program
+  .command("send-batch")
+  .description("send a batch transaction with EOA")
+  .action(async () => {
+    console.log("Sending batch transaction...");
+    const alice = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    const bob = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+    const openfortSmartAccount = await getAccount(authority);
+
+    const userOp = await bundlerClient.prepareUserOperation({
+      account: openfortSmartAccount,
+      calls: [
+        {
+          to: alice,
+          value: 4242n,
+        },
+        {
+          to: bob,
+          value: 1337n,
+        },
+      ],
+    });
+    // const userOp = bundlerClient.sendUserOperation({
+    //   account: openfortSmartAccount,
+    //   calls: [
+    //     {
+    //       to: alice,
+    //       value: 4242n,
+    //     },
+    //     {
+    //       to: bob,
+    //       value: 1337n,
+    //     },
+    //   ],
+    // });
+    console.log("User operation:", userOp);
   });
 
 program.parse();
