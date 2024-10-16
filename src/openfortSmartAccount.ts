@@ -66,7 +66,7 @@ export async function getAccount(authority: Account) {
     },
     async getFactoryArgs() {
       // Smart Account Proxy has been directly injected in the EOA
-      // and initialize during the 7702 transaction
+      // and initialized during the 7702 transaction
       // no factory involve in the business
       return { factory: undefined, factoryData: undefined };
     },
