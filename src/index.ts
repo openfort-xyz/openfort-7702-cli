@@ -33,10 +33,13 @@ program
   .command("get-nonce")
   .description("get authority account transaction count")
   .action(async () => {
-    const nonce = await publicClient.getTransactionCount({
+    const EOAnonce = await publicClient.getTransactionCount({
       address: authority.address,
     });
-    console.log(`Authority Account Nonce = ${nonce}`);
+    console.log(`EOA nonce = ${EOAnonce}`);
+    const openfortSmartAccount = await getAccount(authority);
+    const AAnonce = await openfortSmartAccount.getNonce();
+    console.log(`4337 nonce = ${AAnonce}`);
   });
 
 program
@@ -126,28 +129,29 @@ program
   });
 
 program
-  .command("send-batch")
-  .description("send a batch transaction with EOA")
+  .command("test-send-batch")
+  .description("send 4337 wei to alice and bob within the same UserOperation")
   .action(async () => {
-    console.log(`Sending batch transaction with EOA ${authority.address}`);
-    const alice = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    console.log(
+      `Sending 4337 wei to alice & bob with EOA ${authority.address} in one UserOperation!`,
+    );
+    const alice = "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f";
     const bob = "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720";
     const openfortSmartAccount = await getAccount(authority);
-
     const userOp = await bundlerClient.sendUserOperation({
       account: openfortSmartAccount,
       calls: [
         {
           to: alice,
-          value: 4242n,
+          value: 4337n,
         },
         {
           to: bob,
-          value: 1337n,
+          value: 4337n,
         },
       ],
     });
-    console.log("User operation:", userOp);
+    console.log("User operation hash:", userOp);
   });
 
 program.parse();
