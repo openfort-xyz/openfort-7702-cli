@@ -17,5 +17,5 @@ export const walletClient = createWalletClient({
 
 export const bundlerClient = createBundlerClient({
   client: publicClient,
-  transport: http("http://localhost:3000/rpc"),
+  transport: http("http://localhost:4337"),
 });

@@ -1,9 +1,9 @@
 import type { Account, Address } from "viem";
-import { encodeFunctionData, decodeFunctionData } from "viem/utils";
+import { encodeFunctionData, decodeFunctionData, parseAbi } from "viem/utils";
 import { publicClient } from "./clients";
-import { entryPointV7 } from "./constants";
 import {
-  entryPoint07Abi,
+  entryPoint06Abi,
+  entryPoint06Address,
   getUserOperationHash,
 } from "viem/account-abstraction";
 import type { UserOperation } from "viem/account-abstraction";
@@ -16,9 +16,9 @@ export async function getAccount(authority: Account) {
   const account = await toSmartAccount({
     client: publicClient,
     entryPoint: {
-      abi: entryPoint07Abi,
-      address: entryPointV7,
-      version: "0.7",
+      abi: entryPoint06Abi,
+      address: entryPoint06Address,
+      version: "0.6",
     },
     async encodeCalls(calls) {
       if (calls.length === 1) {
@@ -60,8 +60,7 @@ export async function getAccount(authority: Account) {
     },
 
     async getAddress() {
-      // Smart Account address *IS* the EOA authority address
-      // 7702 spirit
+      // 7702 spirit: Smart Account address *IS* the EOA authority address
       return authority.address;
     },
     async getFactoryArgs() {
@@ -70,12 +69,20 @@ export async function getAccount(authority: Account) {
       // no factory involve in the business
       return { factory: undefined, factoryData: undefined };
     },
-    async getNonce() {
-      const transactionCount = await publicClient.getTransactionCount({
-        address: authority.address,
+
+    async getNonce({ key = 0n } = {}) {
+      const address = await this.getAddress();
+      const nonce = await publicClient.readContract({
+        abi: parseAbi([
+          "function getNonce(address, uint192) pure returns (uint256)",
+        ]),
+        address: entryPoint06Address,
+        functionName: "getNonce",
+        args: [address, key],
       });
-      return BigInt(transactionCount);
+      return nonce;
     },
+
     async getStubSignature() {
       return "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     },
@@ -92,8 +99,8 @@ export async function getAccount(authority: Account) {
         throw new Error("Authority does not have signMessage method");
       const hash = getUserOperationHash({
         chainId: anvil.id,
-        entryPointAddress: entryPointV7,
-        entryPointVersion: "0.7",
+        entryPointAddress: entryPoint06Address,
+        entryPointVersion: "0.6",
         userOperation: {
           ...(userOperation as unknown as UserOperation),
           sender: await this.getAddress(),
