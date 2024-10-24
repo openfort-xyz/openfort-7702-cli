@@ -8,7 +8,7 @@ import {
 } from "viem/account-abstraction";
 import type { UserOperation } from "viem/account-abstraction";
 import { toSmartAccount } from "viem/account-abstraction";
-import { anvil } from "viem/chains";
+import { network } from "./constants";
 
 // Authority EOA behaves like a Smart Account
 
@@ -98,7 +98,7 @@ export async function getAccount(authority: Account) {
       if (!authority || !authority.signMessage)
         throw new Error("Authority does not have signMessage method");
       const hash = getUserOperationHash({
-        chainId: anvil.id,
+        chainId: network.id,
         entryPointAddress: entryPoint06Address,
         entryPointVersion: "0.6",
         userOperation: {

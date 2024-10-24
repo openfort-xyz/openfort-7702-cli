@@ -7,7 +7,7 @@
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "figlet": "^1.8.0",
-    "viem": "^2.21.19"
+    "viem": "^2.21.25"
   },
   "bin": {
     "openfort-7702": "bin/index.js"

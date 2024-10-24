@@ -1,7 +1,7 @@
 # Openfort 7702 CLI
 
 Get authorization hash, sign it, send a 7702 transaction to delegate Openfort Smart Account to your EOA.
-Enjoy all 4337 feature from the comfort of your EOA (gas sponsoring with Paymaster, session keys and account recovery).
+Enjoy 4337 features from the comfort of your EOA (batching, gas sponsoring with Paymaster, session keys).
 
 ## Requirements
 
